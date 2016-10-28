@@ -21,11 +21,12 @@ import java.util.logging.Logger;
  */
 public class Light {
     public Light(int new_id) {
+        SwitchClient.log("Constructor Called");
         id = new_id;
-        state = (getState() != 0);
+        state = getState();
     }
     
-    public int getState(){
+    public boolean getState() {
         try {
             URL obj = new URL("https://duluth.chandlerswift.com/5/light/status?id=" + Integer.toString(id));
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -39,26 +40,31 @@ public class Light {
                 response.append(inputLine);
             }
             in.close();
-            
-            return Integer.parseInt(response.toString());
+            return !response.toString().equals("0");
         } catch (MalformedURLException ex) {
-            Logger.getLogger(LightGUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SwitchClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(LightGUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SwitchClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return -1;
+        return false;
+    }
+    
+    public boolean getCachedState() {
+        return state;
     }
     
     public void setState(boolean new_state) {
+        SwitchClient.log("Setting light " + Integer.toString(id));
         try {
             state = new_state;
-            URL obj = new URL("https://duluth.chandlerswift.com/5/light/set?1=" + (state ? "1" : "0"));
+            URL obj = new URL("https://duluth.chandlerswift.com/5/light/set?" + id + "=" + (state ? "255" : "0")); // 255 works for dimmable and not
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            InputStream is = con.getInputStream();
+            //InputStream is = con.getInputStream();
+            con.getInputStream();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(LightGUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SwitchClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(LightGUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SwitchClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
