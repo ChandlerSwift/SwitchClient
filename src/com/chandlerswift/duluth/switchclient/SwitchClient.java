@@ -96,7 +96,7 @@ public class SwitchClient extends Application {
         root.setTop(makeMenuBar());
         root.setCenter(contentContainer);
         
-        Scene scene = new Scene(root, 500, 300);
+        Scene scene = new Scene(root, 400, 230);
         primaryStage.setTitle("Chandler's Light Control");
         primaryStage.getIcons().addAll(
                 new Image(SwitchClient.class.getResourceAsStream("icon_16.png")),
@@ -131,7 +131,7 @@ public class SwitchClient extends Application {
 
         // Create menu bar and add the menus.
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(optionsMenu, helpMenu);
+        menuBar.getMenus().addAll(/*optionsMenu, */helpMenu);
         return menuBar;
     }
     
@@ -145,7 +145,7 @@ public class SwitchClient extends Application {
             final int j = i;
             btns[i].setOnAction(a -> {
                 btns[j].setDisable(true);
-                lights[j].setState(!lights[j].getCachedState());
+                lights[j].setState(!lights[j].getCachedState(), "user", "pass");
                 btns[j].setText(descriptions[j] + (lights[j].getCachedState() ? " Off" : " On"));
                 btns[j].setDisable(false);
             });
@@ -154,7 +154,7 @@ public class SwitchClient extends Application {
         }
         btns[1].setOnAction(e -> {
                 btns[1].setDisable(true);
-                lights[1].setState(!lights[1].getCachedState());
+                lights[1].setState(!lights[1].getCachedState(), "user", "pass");
                 btns[1].setText(descriptions[1] + (lights[1].getCachedState() ? " Off" : " On"));
                 btns[1].setDisable(false);
                 mainIndicator.setFill(lights[1].getCachedState() ? Color.YELLOW : Color.DARKGRAY);
@@ -254,7 +254,7 @@ public class SwitchClient extends Application {
         StackPane root = new StackPane();
         Label loading = new Label("Loading...");
         root.getChildren().add(loading);
-        Scene scene = new Scene(root, 500, 300);
+        Scene scene = new Scene(root, 400, 200);
         primaryStage.setTitle("Chandler's Light Control");
         primaryStage.getIcons().addAll(
                 new Image(SwitchClient.class.getResourceAsStream("icon_16.png")),
@@ -274,7 +274,8 @@ public class SwitchClient extends Application {
     
     @Override
     public void stop() {
-        System.out.println(log);
+        // Debugging:
+//        System.out.println(log);
     }
     
     private static String log;

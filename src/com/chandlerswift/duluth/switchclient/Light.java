@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,8 +29,8 @@ public class Light {
     
     public boolean getState() {
         try {
-            URL obj = new URL("https://duluth.chandlerswift.com/5/light/status?id=" + Integer.toString(id));
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            URL url = new URL("https://duluth.chandlerswift.com/5/light/status?id=" + Integer.toString(id));
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -53,12 +54,15 @@ public class Light {
         return state;
     }
     
-    public void setState(boolean new_state) {
+    public void setState(boolean new_state, String username, String password) {
         SwitchClient.log("Setting light " + Integer.toString(id));
         try {
             state = new_state;
             URL obj = new URL("https://duluth.chandlerswift.com/5/light/set?" + id + "=" + (state ? "255" : "0")); // 255 works for dimmable and not
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            String encoded = Base64.getEncoder().encodeToString((username+":"+password).getBytes());
+            SwitchClient.log("Authorization: Basic ", encoded);
+            con.setRequestProperty("Authorization", "Basic "+encoded);
             //InputStream is = con.getInputStream();
             con.getInputStream();
         } catch (MalformedURLException ex) {
